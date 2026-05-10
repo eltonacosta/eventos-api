@@ -2,6 +2,8 @@
 
 API REST para gerenciamento de ambientes e reservas. O sistema permite cadastrar salas, criar reservas, bloquear conflitos de horario, consultar reservas paginadas, filtrar reservas por periodo e consultar horarios/salas disponiveis.
 
+[Visualização do problema](https://excalidraw.com/#json=Otdfwwce7AwrrCTX19eLo,pYcryka68BsxEwf5LBKLOg)
+
 ## Tecnologias
 
 - Java 17
