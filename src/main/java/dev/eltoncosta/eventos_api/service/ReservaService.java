@@ -1,8 +1,12 @@
 package dev.eltoncosta.eventos_api.service;
 
 import dev.eltoncosta.eventos_api.exception.ConflitoHorarioException;
+import dev.eltoncosta.eventos_api.repository.specification.ReservaSpecification;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import dev.eltoncosta.eventos_api.dto.ReservaRequest;
@@ -13,6 +17,8 @@ import dev.eltoncosta.eventos_api.model.Reserva;
 import dev.eltoncosta.eventos_api.repository.AmbienteRepository;
 import dev.eltoncosta.eventos_api.repository.ReservaRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +56,21 @@ public class ReservaService {
 
     public Page<ReservaResponse> listar(Pageable pageable) {
         return reservaRepository.findAllComSala(pageable)
+                .map(reservaMapper::toResponse);
+    }
+
+    public Page<ReservaResponse> listarPorPeriodo(LocalDate inicio, LocalDate fim, Pageable pageable) {
+        Pageable pageableOrdenado = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.ASC, "dataReservadaInicio")
+        );
+
+        Specification<Reserva> specification = Specification
+                .where(ReservaSpecification.fetchSala())
+                .and(ReservaSpecification.dataReservadaInicioEntre(inicio, fim));
+
+        return reservaRepository.findAll(specification, pageableOrdenado)
                 .map(reservaMapper::toResponse);
     }
 

@@ -5,19 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import dev.eltoncosta.eventos_api.dto.ReservaRequest;
 import dev.eltoncosta.eventos_api.dto.ReservaResponse;
 import dev.eltoncosta.eventos_api.service.ReservaService;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/reservas")
@@ -57,4 +52,15 @@ public class ReservaController {
         Page<ReservaResponse> response = reservaService.listar(pageable);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/periodo")
+    public ResponseEntity<Page<ReservaResponse>> listarPorPeriodo(
+            @RequestParam LocalDate inicio,
+            @RequestParam LocalDate fim,
+            @PageableDefault(size = 10, sort = "dataReservadaInicio", direction = Sort.Direction.ASC)
+            Pageable pageable) {
+        Page<ReservaResponse> response = reservaService.listarPorPeriodo(inicio, fim, pageable);
+        return ResponseEntity.ok(response);
+    }
+
 }
