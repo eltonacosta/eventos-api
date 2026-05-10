@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.*;
 
 import dev.eltoncosta.eventos_api.dto.ReservaRequest;
 import dev.eltoncosta.eventos_api.dto.ReservaResponse;
+import dev.eltoncosta.eventos_api.dto.HorarioDisponivelResponse;
+import dev.eltoncosta.eventos_api.dto.SalaDisponivelResponse;
 import dev.eltoncosta.eventos_api.service.ReservaService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/reservas")
@@ -60,6 +63,20 @@ public class ReservaController {
             @PageableDefault(size = 10, sort = "dataReservadaInicio", direction = Sort.Direction.ASC)
             Pageable pageable) {
         Page<ReservaResponse> response = reservaService.listarPorPeriodo(inicio, fim, pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/horarios-disponiveis")
+    public ResponseEntity<List<HorarioDisponivelResponse>> listarHorariosDisponiveis(
+            @RequestParam Long ambienteId,
+            @RequestParam LocalDate data) {
+        List<HorarioDisponivelResponse> response = reservaService.listarHorariosDisponiveis(ambienteId, data);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/salas-disponiveis")
+    public ResponseEntity<List<SalaDisponivelResponse>> listarSalasDisponiveis(@RequestParam LocalDate data) {
+        List<SalaDisponivelResponse> response = reservaService.listarSalasDisponiveis(data);
         return ResponseEntity.ok(response);
     }
 

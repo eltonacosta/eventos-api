@@ -1,6 +1,7 @@
 package dev.eltoncosta.eventos_api.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -35,6 +36,31 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long>, JpaSpec
             WHERE r.id = :id
             """)
     Optional<Reserva> findByIdComSala(@Param("id") Long id);
+
+    @Query("""
+            SELECT r
+            FROM Reserva r
+            WHERE r.sala.id = :ambienteId
+              AND r.dataReservadaInicio < :fimDia
+              AND r.dataReservadaFim > :inicioDia
+            ORDER BY r.dataReservadaInicio ASC
+            """)
+    List<Reserva> findReservasDoDiaPorAmbiente(
+            @Param("ambienteId") Long ambienteId,
+            @Param("inicioDia") LocalDateTime inicioDia,
+            @Param("fimDia") LocalDateTime fimDia);
+
+    @Query("""
+            SELECT r
+            FROM Reserva r
+            JOIN FETCH r.sala
+            WHERE r.dataReservadaInicio < :fimDia
+              AND r.dataReservadaFim > :inicioDia
+            ORDER BY r.sala.id ASC, r.dataReservadaInicio ASC
+            """)
+    List<Reserva> findReservasDoDia(
+            @Param("inicioDia") LocalDateTime inicioDia,
+            @Param("fimDia") LocalDateTime fimDia);
 
     @Query("""
             SELECT COUNT(r) > 0
